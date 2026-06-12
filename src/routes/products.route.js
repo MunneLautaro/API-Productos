@@ -1,21 +1,21 @@
-import { Router } from "express";
-const router = Router();
+import { Router } from "express"
+const router = Router()
 
 import {
-  createCategory,
-  getCategories,
-  getCategoryById,
-  updateCategory,
-  deleteCategory,
-} from "../controllers/categories.controller.js";
+  createProduct,
+  getProducts,
+  getProductById,
+  updateProduct,
+  deleteProduct,
+} from "../controllers/products.controller.js"
 
-router.get("/", getCategories);
-router.get("/:id", getCategoryById);
+router.get("/", getProducts)
+router.get("/:id", getProductById)
 
-router.post("/", createCategory);
+router.post("/", createProduct)
 
-router.put("/:id", updateCategory);
+router.put("/:id", updateProduct)
 
-router.delete("/:id", deleteCategory);
+router.delete("/:id", deleteProduct)
 
-export default router;
+export default router
