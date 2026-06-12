@@ -1,6 +1,11 @@
 import express from "express";
 import cors from "cors";
 
+import productsRouter from "./routes/products.js";
+
+import dotenv from "dotenv";
+dotenv.config();
+
 const app = express();
 
 const whitelist = ["http://localhost:5173"];
@@ -23,6 +28,8 @@ app.use(cors(corsOptions));
 
 app.use(express.json());
 
+app.use("/api/products", productsRouter);
+
 app.use((req, res, next) => {
   res.status(404).json({
     status: 404,
@@ -31,7 +38,7 @@ app.use((req, res, next) => {
   });
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en el puerto ${PORT}`);
 });
