@@ -2,6 +2,7 @@ import express from "express"
 import cors from "cors"
 
 import productsRouter from "./routes/products.js"
+import authRouter from "./routes/auth.route.js"
 
 import dotenv from "dotenv"
 dotenv.config()
@@ -29,6 +30,8 @@ app.use(cors(corsOptions))
 app.use(express.json())
 
 app.use("/api/products", productsRouter)
+
+app.use("/api/auth", authRouter)
 
 app.use((req, res, next) => {
   res.status(404).json({
