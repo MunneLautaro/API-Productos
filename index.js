@@ -23,6 +23,14 @@ app.use(cors(corsOptions));
 
 app.use(express.json());
 
+app.use((req, res, next) => {
+  res.status(404).json({
+    status: 404,
+    error: "Not Found",
+    message: `La ruta ${req.originalUrl} con el método ${req.method} no existe en este servidor.`,
+  });
+});
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en el puerto ${PORT}`);
