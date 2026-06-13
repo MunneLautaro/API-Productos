@@ -1,9 +1,22 @@
-import { fetchProducts, fetchProductById } from "../models/products.model.js"
+import {
+  fetchProducts,
+  fetchProductById,
+  addProduct,
+} from "../models/products.model.js"
 
-export const createProduct = (req, res) => {
-  const { title } = req.body
-
-  res.status(201).json({ message: `Producto creado ${title}` })
+export const createProduct = async (req, res) => {
+  try {
+    const { productData } = req.body
+    if (!productData || !productData.title || !productData.price) {
+      return res
+        .status(422)
+        .json({ error: "El formato del producto es inválido" })
+    }
+    const productId = await addProduct(productData)
+    res.status(201).json({ id: productId, ...productData })
+  } catch (error) {
+    res.status(500).json({ error: "Error al crear el producto" })
+  }
 }
 
 export const getProducts = async (req, res) => {

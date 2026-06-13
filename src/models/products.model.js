@@ -1,6 +1,6 @@
 import db from "../config/firebase.js"
 
-import { collection, getDocs, getDoc, doc } from "firebase/firestore"
+import { collection, getDocs, getDoc, doc, addDoc } from "firebase/firestore"
 
 const productsCollection = collection(db, "products")
 
@@ -33,5 +33,14 @@ export const fetchProductById = async (productoId) => {
     }
   } catch (error) {
     console.error("Error al obtener el producto:", error)
+  }
+}
+
+export const addProduct = async (productData) => {
+  try {
+    const docRef = await addDoc(productsCollection, productData)
+    return docRef.id
+  } catch (error) {
+    console.error("Error al crear el producto:", error)
   }
 }
