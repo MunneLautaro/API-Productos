@@ -1,29 +1,27 @@
 import {
-  fetchProducts,
-  fetchProductById,
-  addProduct,
-  changeProduct,
-  removeProduct,
-} from "../models/products.model.js"
+  createProductService,
+  deleteProductService,
+  getProductByIdService,
+  getProductsService,
+  updateProductService,
+} from "../services/products.service.js"
 
 export const createProduct = async (req, res) => {
   try {
     const { productData } = req.body
-    if (!productData || !productData.title || !productData.price) {
-      return res
-        .status(422)
-        .json({ error: "El formato del producto es inválido" })
-    }
-    const productId = await addProduct(productData)
-    res.status(201).json({ id: productId, ...productData })
+    const product = await createProductService(productData)
+
+    res.status(201).json(product)
   } catch (error) {
-    res.status(500).json({ error: "Error al crear el producto" })
+    res
+      .status(error.statusCode || 500)
+      .json({ error: error.message || "Error al crear el producto" })
   }
 }
 
 export const getProducts = async (req, res) => {
   try {
-    const products = await fetchProducts()
+    const products = await getProductsService()
     res.json(products)
   } catch (error) {
     res.status(500).json({ error: "Error al obtener los productos" })
@@ -34,15 +32,13 @@ export const getProductById = async (req, res) => {
   try {
     const { id } = req.params
 
-    const product = await fetchProductById(id)
-
-    if (!product) {
-      return res.status(404).json({ error: "Producto no encontrado" })
-    }
+    const product = await getProductByIdService(id)
 
     res.json(product)
   } catch (error) {
-    res.status(500).json({ error: "Error al obtener el producto" })
+    res
+      .status(error.statusCode || 500)
+      .json({ error: error.message || "Error al obtener el producto" })
   }
 }
 
@@ -50,28 +46,15 @@ export const updateProduct = async (req, res) => {
   try {
     const { id } = req.params
 
-    const product = await fetchProductById(id)
-
-    if (!product) {
-      return res.status(404).json({ error: "Producto no encontrado" })
-    }
-
     const { productData } = req.body
-    if (!productData || !productData.title || !productData.price) {
-      return res
-        .status(422)
-        .json({ error: "El formato del producto es inválido" })
-    }
 
-    const result = await changeProduct(id, productData)
+    const result = await updateProductService(id, productData)
 
-    if (result) {
-      res.json({ message: `Se actualizo el ${productData.title} del ID ${id}` })
-    } else {
-      res.status(400).json({ error: "Error al actualizar el producto" })
-    }
+    res.json(result)
   } catch (error) {
-    res.status(500).json({ error: "Error al actualizar el producto" })
+    res
+      .status(error.statusCode || 500)
+      .json({ error: error.message || "Error al actualizar el producto" })
   }
 }
 
@@ -79,20 +62,12 @@ export const deleteProduct = async (req, res) => {
   try {
     const { id } = req.params
 
-    const product = await fetchProductById(id)
+    const result = await deleteProductService(id)
 
-    if (!product) {
-      return res.status(404).json({ error: "Producto no encontrado" })
-    }
-
-    const result = await removeProduct(id)
-
-    if (result) {
-      res.json({ message: `Se eliminó el producto del ID ${id}` })
-    } else {
-      res.status(400).json({ error: "Error al eliminar el producto" })
-    }
+    res.json(result)
   } catch (error) {
-    res.status(500).json({ error: "Error al eliminar el producto" })
+    res
+      .status(error.statusCode || 500)
+      .json({ error: error.message || "Error al eliminar el producto" })
   }
 }
