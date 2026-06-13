@@ -1,6 +1,14 @@
 import db from "../config/firebase.js"
 
-import { collection, getDocs, getDoc, doc, addDoc } from "firebase/firestore"
+import {
+  collection,
+  getDocs,
+  getDoc,
+  doc,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+} from "firebase/firestore"
 
 const productsCollection = collection(db, "products")
 
@@ -42,5 +50,27 @@ export const addProduct = async (productData) => {
     return docRef.id
   } catch (error) {
     console.error("Error al crear el producto:", error)
+  }
+}
+
+export const changeProduct = async (productId, updatedData) => {
+  try {
+    const docRef = doc(db, "products", productId)
+    await updateDoc(docRef, updatedData)
+    return true
+  } catch (error) {
+    console.error("Error al actualizar el producto:", error)
+    return false
+  }
+}
+
+export const deleteProduct = async (productId) => {
+  try {
+    const docRef = doc(db, "products", productId)
+    await deleteDoc(docRef)
+    return true
+  } catch (error) {
+    console.error("Error al eliminar el producto:", error)
+    return false
   }
 }
