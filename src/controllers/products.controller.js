@@ -1,4 +1,4 @@
-import { fetchProducts } from "../models/products.model.js"
+import { fetchProducts, fetchProductById } from "../models/products.model.js"
 
 export const createProduct = (req, res) => {
   const { title } = req.body
@@ -7,15 +7,29 @@ export const createProduct = (req, res) => {
 }
 
 export const getProducts = async (req, res) => {
-  const products = await fetchProducts()
-  res.json(products)
+  try {
+    const products = await fetchProducts()
+    res.json(products)
+  } catch (error) {
+    res.status(500).json({ error: "Error al obtener los productos" })
+  }
 }
-export const getProductById = (req, res) => {
-  const { id } = req.params
 
-  res.json({
-    message: `Producto con ID ${id}`,
-  })
+export const getProductById = async (req, res) => {
+  try {
+    const { id } = req.params
+
+    const product = await fetchProductById(id)
+    console.log(product)
+
+    if (!product) {
+      return res.status(404).json({ error: "Producto no encontrado" })
+    }
+
+    res.json(product)
+  } catch (error) {
+    res.status(500).json({ error: "Error al obtener el producto" })
+  }
 }
 
 export const updateProduct = (req, res) => {
