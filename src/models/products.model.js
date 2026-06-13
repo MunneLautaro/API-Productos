@@ -64,7 +64,7 @@ export const changeProduct = async (productId, updatedData) => {
   }
 }
 
-export const deleteProduct = async (productId) => {
+export const removeProduct = async (productId) => {
   try {
     const docRef = doc(db, "products", productId)
     await deleteDoc(docRef)

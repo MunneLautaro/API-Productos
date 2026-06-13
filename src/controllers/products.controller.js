@@ -3,6 +3,7 @@ import {
   fetchProductById,
   addProduct,
   changeProduct,
+  removeProduct,
 } from "../models/products.model.js"
 
 export const createProduct = async (req, res) => {
@@ -34,7 +35,6 @@ export const getProductById = async (req, res) => {
     const { id } = req.params
 
     const product = await fetchProductById(id)
-    console.log(product)
 
     if (!product) {
       return res.status(404).json({ error: "Producto no encontrado" })
@@ -49,6 +49,12 @@ export const getProductById = async (req, res) => {
 export const updateProduct = async (req, res) => {
   try {
     const { id } = req.params
+
+    const product = await fetchProductById(id)
+
+    if (!product) {
+      return res.status(404).json({ error: "Producto no encontrado" })
+    }
 
     const { productData } = req.body
     if (!productData || !productData.title || !productData.price) {
@@ -69,12 +75,24 @@ export const updateProduct = async (req, res) => {
   }
 }
 
-export const deleteProduct = (req, res) => {
-  const { id } = req.params
+export const deleteProduct = async (req, res) => {
+  try {
+    const { id } = req.params
 
-  if (id != 1) {
-    return res.status(404).json({ error: "Producto no encontrado" })
+    const product = await fetchProductById(id)
+
+    if (!product) {
+      return res.status(404).json({ error: "Producto no encontrado" })
+    }
+
+    const result = await removeProduct(id)
+
+    if (result) {
+      res.json({ message: `Se eliminó el producto del ID ${id}` })
+    } else {
+      res.status(400).json({ error: "Error al eliminar el producto" })
+    }
+  } catch (error) {
+    res.status(500).json({ error: "Error al eliminar el producto" })
   }
-
-  res.json({ message: `Producto ID ${id} borrado` })
 }
