@@ -1,5 +1,6 @@
 import {
   createProductService,
+  deleteAllProductsService,
   deleteProductService,
   getProductByIdService,
   getProductsService,
@@ -69,5 +70,17 @@ export const deleteProduct = async (req, res) => {
     res
       .status(error.statusCode || 500)
       .json({ error: error.message || "Error al eliminar el producto" })
+  }
+}
+
+export const deleteAllProducts = async (req, res) => {
+  try {
+    const result = await deleteAllProductsService()
+
+    res.json(result)
+  } catch (error) {
+    res
+      .status(error.statusCode || 500)
+      .json({ error: error.message || "Error al eliminar los productos" })
   }
 }
