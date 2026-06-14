@@ -4,6 +4,8 @@ import cors from "cors"
 import productsRouter from "./src/routes/products.router.js"
 import authRouter from "./src/routes/auth.router.js"
 
+import { authenticateToken } from "./src/middlewares/auth.middleware.js"
+
 import dotenv from "dotenv"
 dotenv.config()
 
@@ -29,7 +31,7 @@ app.use(cors(corsOptions))
 
 app.use(express.json())
 
-app.use("/api/products", productsRouter)
+app.use("/api/products", authenticateToken, productsRouter)
 
 app.use("/api/auth", authRouter)
 
