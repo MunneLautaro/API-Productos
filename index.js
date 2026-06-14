@@ -1,10 +1,49 @@
-import express from "express";
-import cors from "cors";
+import express from "express"
+import cors from "cors"
 
-const app = express();
-app.use(express.json());
-app.use(cors());
+import productsRouter from "./src/routes/products.router.js"
+import authRouter from "./src/routes/auth.router.js"
 
-app.listen(3000, () => {
-  console.log("Servidor corriendo en puerto 3000");
-});
+import { authenticateToken } from "./src/middlewares/auth.middleware.js"
+
+import dotenv from "dotenv"
+dotenv.config()
+
+const app = express()
+
+const whitelist = ["http://localhost:5173"]
+
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true)
+
+    if (whitelist.indexOf(origin) !== -1) {
+      callback(null, true)
+    } else {
+      callback(new Error("No permitido por políticas de CORS (Empresa)"))
+    }
+  },
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true,
+}
+
+app.use(cors(corsOptions))
+
+app.use(express.json())
+
+app.use("/api/products", authenticateToken, productsRouter)
+
+app.use("/api/auth", authRouter)
+
+app.use((req, res, next) => {
+  res.status(404).json({
+    status: 404,
+    error: "Not Found",
+    message: `La ruta ${req.originalUrl} con el método ${req.method} no existe en este servidor.`,
+  })
+})
+
+const PORT = process.env.PORT || 3001
+app.listen(PORT, () => {
+  console.log(`Servidor corriendo en el puerto ${PORT}`)
+})
