@@ -74,3 +74,20 @@ export const removeProduct = async (productId) => {
     return false
   }
 }
+
+export const removeAllProducts = async () => {
+  try {
+    const snapshot = await getDocs(productsCollection)
+
+    const deleteOperations = snapshot.docs.map((productDoc) =>
+      deleteDoc(doc(db, "products", productDoc.id)),
+    )
+
+    await Promise.all(deleteOperations)
+
+    return snapshot.size
+  } catch (error) {
+    console.error("Error al eliminar todos los productos:", error)
+    return false
+  }
+}
