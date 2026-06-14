@@ -4,6 +4,7 @@ import {
   addProduct,
   changeProduct,
   removeProduct,
+  removeAllProducts,
 } from "../models/products.model.js"
 
 const createServiceError = (statusCode, message) => {
@@ -13,7 +14,7 @@ const createServiceError = (statusCode, message) => {
 }
 
 const validateProductData = (productData) => {
-  if (!productData || !productData.title || !productData.price) {
+  if (!productData || !productData.titulo || !productData.precio) {
     throw createServiceError(422, "El formato del producto es inválido")
   }
 }
@@ -56,7 +57,7 @@ export const updateProductService = async (productId, productData) => {
   }
 
   return {
-    message: `Se actualizo el ${productData.title} del ID ${productId}`,
+    message: `Se actualizo el ${productData.titulo} del ID ${productId}`,
   }
 }
 
@@ -75,5 +76,17 @@ export const deleteProductService = async (productId) => {
 
   return {
     message: `Se eliminó el producto del ID ${productId}`,
+  }
+}
+
+export const deleteAllProductsService = async () => {
+  const deletedCount = await removeAllProducts()
+
+  if (deletedCount === false) {
+    throw createServiceError(400, "Error al eliminar los productos")
+  }
+
+  return {
+    message: `Se eliminaron ${deletedCount} productos`,
   }
 }
