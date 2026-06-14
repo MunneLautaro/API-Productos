@@ -3,6 +3,7 @@ const router = Router()
 
 import {
   createProduct,
+  deleteAllProducts,
   getProducts,
   getProductById,
   updateProduct,
@@ -10,6 +11,7 @@ import {
 } from "../controllers/products.controller.js"
 
 router.get("/", getProducts)
+router.delete("/", deleteAllProducts)
 router.get("/:id", getProductById)
 
 router.post("/", createProduct)
