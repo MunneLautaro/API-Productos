@@ -1,7 +1,5 @@
 import { generateToken } from "../utils/token-generator.js"
 
-import jwt from "jsonwebtoken"
-
 const defaultUser = {
   id: 1,
   email: "admin@example.com",
@@ -22,6 +20,7 @@ export const loginUser = (req, res) => {
   const token = generateToken({ id: defaultUser.id, email: defaultUser.email })
 
   return res.json({
+    tokenType: "Bearer",
     token,
   })
 }
