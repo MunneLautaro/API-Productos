@@ -33,12 +33,12 @@ export const fetchProductById = async (productoId) => {
 
     const docSnap = await getDoc(docRef)
 
-    if (docSnap.exists()) {
-      const producto = { id: docSnap.id, ...docSnap.data() }
-      return producto
-    } else {
+    if (!docSnap.exists()) {
       return null
     }
+
+    const producto = { id: docSnap.id, ...docSnap.data() }
+    return producto
   } catch (error) {
     console.error("Error al obtener el producto:", error)
   }
@@ -56,22 +56,43 @@ export const addProduct = async (productData) => {
 export const changeProduct = async (productId, updatedData) => {
   try {
     const docRef = doc(db, "products", productId)
+    const snapshot = await getDoc(docRef)
+
+    if (!snapshot.exists()) {
+      return null
+    }
+
     await updateDoc(docRef, updatedData)
-    return true
+    return {
+      id: docRef.id,
+      ...updatedData,
+    }
   } catch (error) {
     console.error("Error al actualizar el producto:", error)
-    return false
+    throw error
   }
 }
 
 export const removeProduct = async (productId) => {
   try {
     const docRef = doc(db, "products", productId)
+    const snapshot = await getDoc(docRef)
+
+    if (!snapshot.exists()) {
+      return null
+    }
+
+    const deletedProduct = {
+      id: snapshot.id,
+      ...snapshot.data(),
+    }
+
     await deleteDoc(docRef)
-    return true
+
+    return deletedProduct
   } catch (error) {
     console.error("Error al eliminar el producto:", error)
-    return false
+    throw error
   }
 }
 
@@ -88,6 +109,6 @@ export const removeAllProducts = async () => {
     return snapshot.size
   } catch (error) {
     console.error("Error al eliminar todos los productos:", error)
-    return false
+    throw error
   }
 }
